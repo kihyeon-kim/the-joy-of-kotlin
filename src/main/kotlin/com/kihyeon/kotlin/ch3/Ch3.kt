@@ -63,6 +63,7 @@ val multiplyBy2_it: (Int) -> Int = { n -> double(n) }
 val multiplyBy2_refer: (Int) -> Int = ::double
 
 
+// 3-2
 class MyClass {
     fun double(n: Int): Int = n * 2
 }
@@ -98,3 +99,83 @@ internal class Test {
 }
 
 fun <T, U, V> composeType(f: (U) -> V, g: (T) -> (U)): (T) -> (V) = { f(g(it)) }
+
+// 3.3
+// 다인자 함수
+// (Int) -> ((Int) -> Int)
+
+typealias IntBinOp = (Int) -> (Int) -> Int
+
+val addFunc: IntBinOp = { x ->
+    { y ->
+        x + y
+    }
+}
+
+fun addFuncTest() {
+    println(addFunc(3)(5))
+}
+
+fun `exercise-3-4`() {
+    val square: (Int) -> Int = { x -> x * x }
+    val triple: (Int) -> Int = { x -> x * 3 }
+    val squareTriple: (Int) -> Int = { x -> triple(square(x)) }
+
+    val compose: ((Int) -> Int) -> ((Int) -> Int) -> (Int) -> Int =
+        { x ->
+            { y ->
+                { z ->
+                    x(y(z))
+                }
+            }
+        }
+
+    // (Int) -> Int. 함수의 타입.
+    // T 라고 보면. (T) -> (T) -> T
+}
+typealias IntUnaryOp = (Int) -> Int
+
+fun `exercise-3-4-typealias`() {
+    val compose: (IntUnaryOp) -> (IntUnaryOp) -> IntUnaryOp =
+        { x ->
+            { y ->
+                { z ->
+                    x(y(z)) // y 다음 x !!
+                }
+            }
+        }
+
+    val square: IntUnaryOp = { it * it }
+    val triple: IntUnaryOp = { it * 3 }
+
+    val squareOfTriple = compose(square)(triple)
+
+    println(squareOfTriple(2))
+}
+
+fun `exercise-3-5`() {
+    fun <T, U, V> higherCompose(): ((U) -> V) -> ((T) -> U) -> ((T) -> V) =
+        { f ->
+            { g ->
+                { x ->
+                    f(g(x))
+                }
+            }
+        }
+
+    val square: IntUnaryOp = { it * it }
+    val triple: IntUnaryOp = { it * 3 }
+
+    val squareOfTriple = higherCompose<Int, Int, Int>()(square)(triple)
+}
+
+fun `exercise-3-6`() {
+    fun <T, U, V> higherAndThen(): ((T) -> U) -> ((U) -> V) -> ((T) -> V) =
+        { f ->
+            { g ->
+                { x ->
+                    g(f(x))
+                }
+            }
+        }
+}
