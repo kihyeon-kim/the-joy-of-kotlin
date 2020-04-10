@@ -66,3 +66,122 @@ class `exercise-4-1` {
     // a를 b번 만큼 +1
 }
 
+// 4.2.3. 재귀 함수 값 사용하기
+
+//fun factorial(n: Int): Int = if (n == 0) 1 else n * factorial(n - 1)
+
+object `exercise_4_2` {
+    // to BigInteger
+    val factorial: (Int) -> Int by lazy {
+        { n: Int ->
+            if (n == 0) {
+                1
+            } else {
+                n * factorial(n - 1)
+            }
+        }
+    }
+
+    //    val factorial2: (Int) -> Int =
+    //        { n: Int ->
+    //            if (n == 0) {
+    //                1
+    //            } else {
+    //                n * factorial2(n - 1)
+    //            }
+    //        }
+    //    }
+
+    //    object Factorial {
+    //        lateinit var factorial: (Int) -> Int
+    //
+    //        init {
+    //            factorial = { n -> if (n <= 1) 1 else n * factorial(n - 1) }
+    //        }
+    //    }
+
+    object Factorial {
+        private lateinit var fact: (Int) -> Int
+
+        init {
+            fact = { n -> if (n <= 1) 1 else n * fact(n - 1) }
+        }
+
+        val factorial = fact
+    }
+
+    @JvmStatic
+    fun main(args: Array<String>) {
+        println(factorial(100))
+        //com.kihyeon.kotlin.ch4.factorial(40000) // SO
+    }
+}
+
+// 4.3. 재귀 함수와 리스트
+//fun <T> head(list: List<T>): T =
+//    if (list.isEmpty()) {
+//        throw IllegalArgumentException()
+//    } else {
+//        list[0]
+//    }
+//
+//fun <T> tail(list: List<T>): List<T> =
+//    if (list.isEmpty()) {
+//        throw IllegalArgumentException()
+//    } else {
+//        list.drop(1)
+//    }
+//
+//fun sum(list: List<Int>): Int =
+//    if (list.isEmpty()) {
+//        0
+//    } else {
+//        head(list) + sum(tail(list))
+//    }
+
+fun <T> List<T>.head(): T =
+    if (this.isEmpty()) {
+        throw IllegalArgumentException()
+    } else {
+        this[0]
+    }
+
+fun <T> List<T>.tail(): List<T> =
+    if (this.isEmpty()) {
+        throw IllegalArgumentException()
+    } else {
+        this.drop(1)
+    }
+
+//fun sum(list: List<Int>): Int =
+//    if (list.isEmpty()) {
+//        0
+//    } else {
+//        list.head() + sum(list.tail())
+//    }
+
+fun sum(list: List<Int>): Int {
+    tailrec fun sumTail(list: List<Int>, acc: Int): Int {
+        return if (list.isEmpty()) {
+            0
+        } else {
+            sumTail(list.tail(), acc + list.head())
+        }
+    }
+
+    return sumTail(list, 0)
+}
+
+
+// 4.3.1. 이중 재귀 함수 사용하기
+fun fibonacci(n: Int): Int {
+    return if (n == 0 || n == 1) {
+        1
+    } else {
+        fibonacci(n - 1) + fibonacci(n - 2)
+    }
+}
+
+class `exercise_4_3` // 책으로 확인!
+
+
