@@ -54,12 +54,12 @@ fun sumTail(n: Int): Int {
     //    return sumTail(n, 0)
 }
 
-fun main() {
-    println(sum(10))
-    println(sumTail(10))
-}
+//fun main() {
+//    println(sum(10))
+//    println(sumTail(10))
+//}
 
-class `exercise-4-1` {
+class Exercise_4_1 {
     fun inc(n: Int) = n + 1
     fun dec(n: Int) = n - 1
 
@@ -70,7 +70,7 @@ class `exercise-4-1` {
 
 //fun factorial(n: Int): Int = if (n == 0) 1 else n * factorial(n - 1)
 
-object `exercise_4_2` {
+object Exercise_4_2 {
     // to BigInteger
     val factorial: (Int) -> Int by lazy {
         { n: Int ->
@@ -182,6 +182,70 @@ fun fibonacci(n: Int): Int {
     }
 }
 
-class `exercise_4_3` // 책으로 확인!
+class Exercise_4_3 // 책으로 확인!
 
 
+// 4.3.2. 리스트에 대한 재귀 추상하기
+//fun sum(list: List<Int>): Int =
+//    if (list.isEmpty()) {
+//        0
+//    } else {
+//        list.head() + sum(list.tail())
+//    }
+
+fun <T> makeString(list: List<T>, delim: String): String =
+    when {
+        list.isEmpty() -> ""
+        list.tail().isEmpty() -> "${list.head()}${makeString(list.tail(), delim)}"
+        else -> "${list.head()}$delim${makeString(list.tail(), delim)}"
+    }
+
+class Exercise_4_4 {
+    // makeString 을 꼬리재귀로 만들기
+    // 내가한것
+    //    fun <T> makeString(list: List<T>, delim: String): String {
+    //        tailrec fun <T> makeString(list: List<T>, acc: String): String =
+    //            when {
+    //                list.isEmpty() -> ""
+    //                list.tail().isEmpty() -> makeString(list.tail(), "")
+    //                else -> makeString(list.subList(0, list.size - 1), "$delim${list.last()}$acc")
+    //            }
+    //
+    //        return makeString(list, "")
+    //    }
+    fun <T> makeString(list: List<T>, delim: String): String {
+        tailrec fun <T> makeString(list: List<T>, acc: String): String =
+            when {
+                list.isEmpty() -> acc
+                acc.isEmpty() -> makeString(list.tail(), "${list.head()}")
+                else -> makeString(list.tail(), "$acc$delim${list.head()}")
+            }
+
+        return makeString(list, "")
+    }
+}
+
+// foldLeft
+/*
+* - 원소 타입이 정해진 리스트에 대해 작용하는 함수가 있다. 이 함수는 다른 타입의 값을 하나 반환한다.
+*   이 두 타입을 각각 T와 U라는 타입으로 추상화 할 수 있다.
+* - 원소 타입 T와 결과 타입 U 사이에 작용하는 연산이 있다. 이 연산은 U 타입을 돌려줘야 한다.
+*   이 연산은 (U, T) 쌍에서 U로 가는 함수라는 점을 알 수 있다.
+*/
+fun <T, U> foldLeft(list: List<T>, initial: U, f: (U, T) -> U): U {
+    fun foldLeft(list: List<T>, acc: U): U =
+        when {
+            list.isEmpty() -> acc
+            else -> foldLeft(list.tail(), f(acc, list.head()))
+        }
+
+    return foldLeft(list, initial)
+}
+
+fun main() {
+    println(foldLeft(listOf("1", "2", "3", "4", "5"), "", String::plus))
+    val a = listOf<Int>()
+    a.fold(0, Int::plus)
+}
+
+// foldRight
