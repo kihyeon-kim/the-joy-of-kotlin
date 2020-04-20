@@ -249,3 +249,73 @@ fun main() {
 }
 
 // foldRight
+
+// 4.3.3. 리스트 뒤집기
+
+// exercise 4-7
+fun <T> reverse(list: List<T>): List<T> {
+    val prepend: (List<T>, T) -> List<T> =
+        { aList: List<T>, t: T ->
+            listOf(t) + aList
+        }
+    return foldLeft(list, listOf(), prepend)
+}
+
+// exercise 4-8
+fun <T> reverse2(list: List<T>): List<T> {
+    fun prepend(list: List<T>, elem: T): List<T> =
+        foldLeft(list, listOf(elem)) { lst, elm -> lst + elm }
+
+    return foldLeft(list, listOf(), ::prepend)
+}
+
+// 4.3.4. 공재귀 만들기
+// exercise 4-9
+fun range(start: Int, end: Int): List<Int> {
+    val result = mutableListOf<Int>()
+
+    var index = start
+
+    while (index < end) {
+        result.add(index)
+        index++
+    }
+
+    return result
+}
+
+// exercise 4-10
+fun <T> unfold(seed: T, f: (T) -> T, p: (T) -> Boolean): List<T> {
+    val result = mutableListOf<T>()
+    var elem = seed
+    while (p(elem)) {
+        result.add(elem)
+        elem = f(elem)
+    }
+
+    return result
+}
+
+// exercise 4-11
+fun range2(start: Int, end: Int): List<Int> {
+    return unfold(start, { it + 1 }, { it < end })
+}
+
+// exercise 4-12
+//fun rangeRec(start: Int, end: Int): List<Int> {
+//  책으로!
+//}
+
+// exercise 4-13
+fun <T> unfoldRec(elem: T, f: (T) -> T, p: (T) -> Boolean): List<T> {
+    // 편의로
+    fun prepend(list: List<T>, elem: T): List<T> =
+        foldLeft(list, listOf(elem)) { lst, elm -> lst + elm }
+
+    return if (p(elem)) {
+        prepend(unfoldRec(f(elem), f, p), elem)
+    } else {
+        listOf()
+    }
+}
+
