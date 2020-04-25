@@ -319,3 +319,6 @@ fun <T> unfoldRec(elem: T, f: (T) -> T, p: (T) -> Boolean): List<T> {
     }
 }
 
+// 4. 메모화. 계산 결과를 메모리에 저장
+
+
